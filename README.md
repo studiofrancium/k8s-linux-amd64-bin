@@ -37,6 +37,10 @@
     tar -xf /tmp/kustomize_linux_amd64.tar.gz -C /tmp/kustomize_linux_amd64
     cp /tmp/kustomize_linux_amd64/linux-amd64/helm bin/helm
 
+## skaffold
+
+    curl -Lo bin/skaffold https://storage.googleapis.com/skaffold/releases/latest/skaffold-linux-amd64
+
 ## Finally
 
     chmod +x bin/*
