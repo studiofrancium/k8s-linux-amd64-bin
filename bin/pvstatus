@@ -1,0 +1,5 @@
+#!/usr/bin/env bash
+
+kubectl get pv
+echo ""
+kubectl get pvc
