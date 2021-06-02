@@ -22,14 +22,16 @@ set -eou pipefail
 IFS=$'\n\t'
 
 SELF_CMD="$0"
-SELF="kubectx"
-if [[ "$(basename "$0")" == kubectl-* ]]; then # invoked as plugin
-  SELF="kubectl ctx"
-fi
 
 KUBECTX="${XDG_CACHE_HOME:-$HOME/.kube}/kubectx"
 
 usage() {
+  local SELF
+  SELF="kubectx"
+  if [[ "$(basename "$0")" == kubectl-* ]]; then # invoked as plugin
+    SELF="kubectl ctx"
+  fi
+
   cat <<EOF
 USAGE:
   $SELF                       : list the contexts
@@ -41,6 +43,7 @@ USAGE:
   $SELF -d <NAME> [<NAME...>] : delete context <NAME> ('.' for current-context)
                                   (this command won't delete the user/cluster entry
                                   that is used by the context)
+  $SELF -u, --unset           : unset the current context
 
   $SELF -h,--help             : show this message
 EOF
@@ -183,14 +186,21 @@ delete_context() {
   $KUBECTL config delete-context "${ctx}"
 }
 
+unset_context() {
+  echo "Unsetting current context." >&2
+  $KUBECTL config unset current-context
+}
+
 main() {
-  if hash kubectl 2>/dev/null; then
-    KUBECTL=kubectl
-  elif hash kubectl.exe 2>/dev/null; then
-    KUBECTL=kubectl.exe
-  else
-    echo >&2 "kubectl is not installed"
-    exit 1
+  if [[ -z "${KUBECTL:-}" ]]; then
+    if hash kubectl 2>/dev/null; then
+      KUBECTL=kubectl
+    elif hash kubectl.exe  2>/dev/null; then
+      KUBECTL=kubectl.exe
+    else
+      echo >&2 "kubectl is not installed"
+      exit 1
+    fi
   fi
 
   if [[ "$#" -eq 0 ]]; then
@@ -218,6 +228,8 @@ main() {
       # - it does not fail when current-context property is not set
       # - it does not return a trailing newline
       kubectl config current-context
+    elif [[ "${1}" == '-u' || "${1}" == '--unset' ]]; then
+      unset_context
     elif [[ "${1}" == '-h' || "${1}" == '--help' ]]; then
       usage
     elif [[ "${1}" =~ ^-(.*) ]]; then
