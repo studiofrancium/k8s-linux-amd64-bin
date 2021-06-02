@@ -6,4 +6,4 @@ nspace=`kubectl config view -o jsonpath="{.contexts[?(@.name==\"$kcontext\")].co
 echo "k8s-status: context=$kcontext, namespace=$nspace"
 echo ""
 
-kubectl get pods
+kubectl get pods --all-namespaces
