@@ -30,6 +30,13 @@
 
     curl -Lo bin/short https://github.com/koki/short/releases/download/0.5.1/short_linux_amd64
 
+## kustomize
+
+    curl -Lo /tmp/kustomize_linux_amd64.tar.gz https://github.com/kubernetes-sigs/kustomize/releases/download/kustomize%2Fv4.1.3/kustomize_v4.1.3_linux_amd64.tar.gz
+    mkdir -p /tmp/kustomize_linux_amd64
+    tar -xf /tmp/kustomize_linux_amd64.tar.gz -C /tmp/kustomize_linux_amd64
+    cp /tmp/kustomize_linux_amd64/linux-amd64/helm bin/helm
+
 ## Finally
 
     chmod +x bin/*
